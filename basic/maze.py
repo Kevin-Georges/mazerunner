@@ -1,46 +1,84 @@
-#defining the maze
 def create_maze(width: int = 5, height: int = 5):
     maze = []
-    for i in range(height):
+    width = (width * 2) + 1
+    height = (height * 2) + 1
+
+    for j in range(height):
         row = []
-        for j in range(width):
-            if i==0 or i==height-1 or j==0 or j == width-1:
+        for i in range(width):
+            if j == 0 or j == height - 1 or i == 0 or i == width - 1:
+                row.append("#")
+            elif j % 2 == 0 and i % 2 == 0:
                 row.append("#")
             else:
                 row.append(".")
         maze.append(row)
     return maze
 
-#adding a horizontal wall
+# convert (i,j) maze indices to (x,y) coordinates
+def convert_i_to_coordinates(i: int) -> int:
+    return (i - 1) // 2
+
+def convert_j_to_y_coordinate(j: int) -> int:
+    return (j - 1) // 2
+
+# convert (x,y) coordinates to (i,j) maze indices
+def convert_x_coordinates_to_i(x_coordinate: int) -> int:
+    return (x_coordinate * 2) + 1
+
+def convert_y_coordinates_to_j(y_coordinate: int) -> int:
+    return (y_coordinate * 2) + 1
+
+# adding a horizontal wall (works on maze indices)
+# horizontal_line = maze row (must be even)
+# x_coordinate    = maze column (must be odd)
 def add_horizontal_wall(maze, x_coordinate, horizontal_line):
-    maze[horizontal_line][x_coordinate]= "#"
+    if horizontal_line % 2 == 0 and x_coordinate % 2 == 1:
+        maze[horizontal_line][x_coordinate] = "#"
     return maze
 
-#adding a vertical wall
+# adding a vertical wall (works on maze indices)
+# y_coordinate = maze row (must be odd)
+# vertical_line = maze column (must be even)
 def add_vertical_wall(maze, y_coordinate, vertical_line):
-    maze[y_coordinate][vertical_line]= "#"
+    if y_coordinate % 2 == 1 and vertical_line % 2 == 0:
+        maze[y_coordinate][vertical_line] = "#"
     return maze
 
-#returning the dimensions of the maze
-def  get_dimensions(maze) -> tuple:
-    height = len (maze)
-    width = len (maze[0])
+# returning the dimensions of the maze
+def get_dimensions(maze) -> tuple:
+    height = len(maze)
+    width = len(maze[0])
     return [width, height]
 
-#returning informaton about the walls around a specific (x,y) co-ordinate
+def display_maze(maze):
+    for row in maze:
+        print("".join(row))
+
+# returning information about the walls around a specific (x,y) coordinate
 def get_walls(maze, x_coordinate, y_coordinate) -> tuple:
-    walls={
-        "North": maze[y_coordinate - 1][x_coordinate],
-        "East": maze[y_coordinate][x_coordinate + 1],
-        "South": maze[y_coordinate + 1][x_coordinate],
-        "West": maze[y_coordinate][x_coordinate - 1]
+    # Convert cell coordinates -> maze indices
+    i = convert_x_coordinates_to_i(x_coordinate)
+    j = convert_y_coordinates_to_j(y_coordinate)
+
+    walls = {
+        "North": maze[j - 1][i],
+        "East":  maze[j][i + 1],
+        "South": maze[j + 1][i],
+        "West":  maze[j][i - 1]
     }
-    walls2 = []
-    for i in walls:
-        if walls[i]=="#":
-            walls[i]= True
-            walls2.append(True)
-        else:
-            walls[i]= False
-            walls2.append(False)
-    return tuple(walls2)
+    # Return True if wall ("#"), False if empty (".")
+    return (
+        walls["North"] == "#",
+        walls["East"] == "#",
+        walls["South"] == "#",
+        walls["West"] == "#"
+    )
+
+if __name__ == "__main__":
+    maze = create_maze()
+    maze = add_horizontal_wall(maze, 3, 4)  # x=3(odd), j=4(even)
+    maze = add_vertical_wall(maze, 3, 4)    # y=3(odd), i=4(even)
+    display_maze(maze)
+    print("\nWalls around cell (1,1):")
+    print(get_walls(maze, 1, 1))
