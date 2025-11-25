@@ -56,8 +56,8 @@ def sense_walls(runner, maze) -> tuple:
     y = get_y(runner)
 
     # Convert cell coordinates to maze indices
-    i = maze.convert_x_coordinates_to_i(x)
-    j = maze.convert_y_coordinates_to_j(y)
+    i =convert_x_coordinates_to_i(x)
+    j =convert_y_coordinates_to_j(y)
 
     # Check left, forward and right based on orientation
     if get_orientation(runner) == "N":
@@ -80,9 +80,9 @@ def sense_walls(runner, maze) -> tuple:
     return (bool(left), bool(forward_wall), bool(right))
 
 # ========== MAIN EXECUTION ==========
-my_maze = maze.create_maze(4, 4)
+my_maze = create_maze(4, 4)
 print("Maze layout:")
-maze.display_maze(my_maze)
+display_maze(my_maze)
 
 # Create a runner at cell coordinates (1,1), facing North
 my_runner = create_runner(1, 1, "N")
