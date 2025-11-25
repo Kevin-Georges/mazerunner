@@ -1,5 +1,5 @@
 #create runner
-import maze
+from maze import *
 def create_runner(x: int = 0, y: int = 0, orientation: str = "N") -> dict:
     runner = {
         "x": x,
